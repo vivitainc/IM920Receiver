@@ -7,46 +7,47 @@ const size_t usb_baudrate = 9600;
 const size_t im920_baudrate = 19200;
 
 // シリアル通信に使うRX,TXピン
-#define IM920_RX_PIN 6
+#define IM920_RX_PIN 4
 #define IM920_TX_PIN 5
 
 SoftwareSerial IM920Serial(IM920_RX_PIN, IM920_TX_PIN);
+
+String receiveAsciis[] = {""};
+
+void dataRecieve() {
+  String stream = IM920Serial.readStringUntil('\n');
+  // String receiveStrings[];
+  String dataStrings;
+  if (stream != ""){
+    // Serial.println(stream); // 受信データそのまま
+
+    int dataLength = stream.length() + 1;
+    char dataChar[dataLength];
+
+    stream.toCharArray(dataChar, dataLength);
+    char *receiveDataStrings = strtok(dataChar, ": ");
+    receiveDataStrings = strtok(NULL, ": ");
+    dataStrings = receiveDataStrings;
+    if (dataStrings != NULL) { 
+      Serial.println(dataStrings);  // 受信データのデータ部分
+    }
+  }
+}
 
 void setup() {
   Serial.begin(usb_baudrate);
   IM920Serial.begin(im920_baudrate);
   im920.setup(IM920Serial);
 
-  // im920.setup(Serial);
   im920.writable(true);
-  im920.clearSettings();
+  delay(500);
   im920.charIO(true);
-  im920.writable(false);
+  delay(500);
 
   Serial.println("complete im920 setup");
 }
  
 void loop() {
-  im920.update();
-  if (im920.available()) {
-    // get remote device info
-    // Serial.print(im920.remoteNode(), HEX); Serial.print(",");
-    // Serial.print(im920.remoteUID(),  HEX); Serial.print(",");
-    // Serial.print(im920.remoteRSSI(), HEX); Serial.print(":");
-
-    // get & handle received data
-    for (size_t i = 0; i < im920.size(); ++i) {
-        Serial.print(im920.data(i), HEX);
-    }
-    //DEDD0001DADA00020003
-    //test1data23
-    //DEDDDADA
-    //testdata
-    Serial.println("");
-
-    // go to next data
-    im920.pop();
-  }
-
-  delay(1000);
+  dataRecieve();
+  delay(50);
 }
