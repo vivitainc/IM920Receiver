@@ -1,0 +1,7 @@
+{
+  "fileupload": {
+    "bucket": {
+      "name": "gs://viviware-dev2.appspot.com"
+    }
+  }
+}
