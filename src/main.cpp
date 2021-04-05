@@ -5,8 +5,8 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 
-const char *ssid = "ita24"; //"Extender-2.4";        //  *** 書き換え必要 ***
-const char *pass = "3331itashin";    //  *** 書き換え必要（8文字以上）***
+const char *ssid = "7077817FB2E5-2G"; //"TSUTAYA-WIFI";    //  *** 書き換え必要 ***
+const char *pass = "2215081862676";   //"tsutayabooks";    //  *** 書き換え必要（8文字以上）***
 
 IM920 im920;
 const size_t usb_baudrate = 9600;
@@ -27,7 +27,6 @@ void dataRecieve() {
   String dataStrings;
   if (stream != ""){
     notReceiveCount = 0;
-    // Serial.println(stream); // 受信データそのまま
 
     int dataLength = stream.length() + 1;
     char dataChar[dataLength];
@@ -37,10 +36,9 @@ void dataRecieve() {
     receiveDataStrings = strtok(NULL, ": ");
     dataStrings = receiveDataStrings;
     if (dataStrings != NULL) { 
-      // Serial.println(dataStrings.indexOf("aaa"));
       Serial.println(dataStrings);  // 受信データのデータ部分
       imageBase64 += dataStrings;
-      Serial.print('R');
+      // Serial.print('R');
     }
   }else{
     notReceiveCount += 1;
@@ -80,15 +78,19 @@ void setup() {
 
   Serial.println("complete im920 setup");
 
+  pinMode(3, OUTPUT);
+  digitalWrite(3, LOW);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);             //  接続確立まで待つこと
   Serial.println("Connecting...");
-  Serial.println(WiFi.status());
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
+    // Serial.print('WiFi.status: ');
+    Serial.println(WiFi.status());
   }
   Serial.println("Connected");
   Serial.println(WiFi.localIP());     //  ESP 自身の IP アドレスをログ出力
+  digitalWrite(3, HIGH);
   delay(5000);
 }
  
